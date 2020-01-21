@@ -64,9 +64,9 @@ const RenderRoutes = ({
   const authState = cookies.get('authState');
   const path = get(location, 'pathname');
   const error = get(location, 'state.error');
-  const accessToken = get(token, 'accessToken')
-    || get(auth, 'token.accessToken')
-    || get(authState, 'token.accessToken');
+  const accessToken = token
+    || get(auth, 'token')
+    || get(authState, 'token');
   if (!routes) {
     return null;
   }
@@ -79,6 +79,7 @@ const RenderRoutes = ({
           path={route.path}
           render={props => (
             <React.Fragment>
+              {console.log(accessToken)}
               {
                 (
                   hasQueryParams || (

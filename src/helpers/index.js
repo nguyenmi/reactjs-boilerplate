@@ -1,5 +1,6 @@
 import {
-  get as getLodash
+  get as getLodash,
+  isString
 } from 'lodash';
 
 export default class Helpers {
@@ -13,4 +14,20 @@ export default class Helpers {
    * @memberof Helpers
    */
   static get = (obj = {}, path = '', defaultValue) => getLodash(obj, path, defaultValue)
+
+  /**
+   * Throw error
+   * @returns {void}
+   * @static
+   * @memberof Helpers
+   */
+  static throwError = (error, isJson = false) => {
+    if (isJson) {
+      throw new Error(JSON.stringify(error));
+    }
+    if (isString(error)) {
+      throw new Error(error);
+    }
+    throw (error);
+  }
 }

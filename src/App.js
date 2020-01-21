@@ -41,11 +41,11 @@ class App extends React.Component {
       if (isEmpty(token)) {
         return;
       }
-      const chucDanhId = Helpers.get(this.props.auth, 'chucDanhId') || null;
-      const response = await this.props.actions.getInfoUser(chucDanhId);
+      const response = await this.props.actions.getInfoUser();
       if (!isEmpty(response.error)) {
         Helpers.throwError(response.error);
       }
+      this.props.history.push('/');
     } catch (error) {
       // set location.state.error để show ở login form
       await this.props.history.replace({ state: { error: messages.LOGIN_FAILED } });
