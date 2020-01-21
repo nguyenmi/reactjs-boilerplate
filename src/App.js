@@ -1,26 +1,111 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import viVN from 'antd/lib/locale-provider/vi_VN';
+import { RenderRoutes } from './routes';
+import './assets/style/main.scss';
+import 'moment/locale/vi';
+import { isEmpty } from 'lodash';
+import Helpers from './helpers';
+import {
+  getInfoUser,
+  authLogout
+} from './actions';
+import { LoadingWrapper } from './components/common';
+import messages from './constants/variables';
+import { ConfigProvider } from 'antd';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loading: true
+    };
+  }
+
+  componentDidMount() {
+    this.getUserInfo();
+  }
+
+  /**
+   * Get thông tin user khi reload APP
+   * @returns {void} Gọi API /me
+   * @memberof App
+   */
+  getUserInfo = async () => {
+    try {
+      const token = Helpers.get(this.props.auth, 'token');
+      if (isEmpty(token)) {
+        return;
+      }
+      const chucDanhId = Helpers.get(this.props.auth, 'chucDanhId') || null;
+      const response = await this.props.actions.getInfoUser(chucDanhId);
+      if (!isEmpty(response.error)) {
+        Helpers.throwError(response.error);
+      }
+    } catch (error) {
+      // set location.state.error để show ở login form
+      await this.props.history.replace({ state: { error: messages.LOGIN_FAILED } });
+      // logout
+      await this.props.actions.authLogout();
+    } finally {
+      this.setLoading(false);
+    }
+  }
+
+  /**
+   * Set state Loading
+   * @param {boolean} loading
+   * @return state
+   * @memberof App
+   */
+  setLoading = (loading = false) => {
+    this.setState({ loading });
+  }
+
+  render() {
+    const {
+      routes,
+      history
+    } = this.props;
+    return (
+      <LoadingWrapper loading={this.state.loading || this.props.loadingApp} params={{ type: 'container' }}>
+        <ConfigProvider locale={viVN}>
+          <RenderRoutes
+            history={history}
+            routes={routes}
+          />
+        </ConfigProvider>
+      </LoadingWrapper>
+    );
+  }
 }
 
-export default App;
+App.propTypes = {
+  routes: PropTypes.arrayOf(PropTypes.any).isRequired,
+  history: PropTypes.objectOf(PropTypes.any).isRequired,
+  actions: PropTypes.objectOf(PropTypes.any).isRequired,
+  auth: PropTypes.objectOf(PropTypes.any).isRequired,
+  loadingApp: PropTypes.bool.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth,
+  location: state.router.location,
+  loadingApp: state.common.loadingApp,
+});
+
+const mapDispatchToProps = dispatch => ({
+  actions: bindActionCreators({
+    getInfoUser,
+    authLogout
+  }, dispatch)
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App);
