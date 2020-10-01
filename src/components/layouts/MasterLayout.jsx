@@ -1,42 +1,29 @@
 import React, { Component } from 'react';
-// import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 class MasterLayout extends Component {
-
-  componentDidMount() {
-   
-  }
-
   componentDidUpdate(prevProps, prevState) {
 
   }
 
-
   render() {
     return (
-      <div>Master layout</div>
+      <div>
+        {this.props.children}
+      </div>
     );
   }
 }
 
-MasterLayout.propTypes = {
+MasterLayout.propTypes = {};
 
-};
+MasterLayout.defaultProps = {};
 
-MasterLayout.defaultProps = {
-
-};
-
-const mapStateToProps = state => ({
-
-});
+const mapStateToProps = state => ({});
 
 const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators({
-
-  }, dispatch)
+  actions: bindActionCreators({}, dispatch)
 });
 
 export default connect(

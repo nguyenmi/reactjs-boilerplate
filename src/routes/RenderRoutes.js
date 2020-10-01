@@ -79,7 +79,6 @@ const RenderRoutes = ({
           path={route.path}
           render={props => (
             <React.Fragment>
-              {console.log(accessToken)}
               {
                 (
                   hasQueryParams || (

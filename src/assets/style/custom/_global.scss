@@ -1,0 +1,24 @@
+.wrap-content {
+  display: flex;
+  flex-wrap: wrap;
+  .card-body {
+    width: 50%;
+    padding: 20px 20px 0;
+    .content-card {
+      padding: 15px;
+      border: 1px solid #ddd;
+      .card-title, .card-text {
+        display: flex;
+        margin-bottom: 10px;
+        .text-primary {
+          min-width: 100px;
+        }
+      }
+    }
+  }
+}
+input[type="text"] {
+  border: 1px solid #ddd;
+  padding: 3px 10px;
+  font-size: 15px;
+}
